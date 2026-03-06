@@ -1,15 +1,12 @@
 import 'dart:async';
+import 'package:coffee_mobile/src/core/config/dio_config.dart';
 import 'package:coffee_mobile/src/core/utils/either/either.dart';
 import 'package:coffee_mobile/src/core/utils/failure/failure.dart';
 import 'package:coffee_mobile/src/features/auth/data/datasource/auth_data_source.dart';
 import 'package:dio/dio.dart';
+import 'package:get_storage/get_storage.dart';
 
 class AuthDataSourceImpl extends AuthDataSource {
-  final Dio client = Dio(
-    BaseOptions(
-      baseUrl: 'https://api-service.fintechhub.uz',
-    ),
-  );
 
   @override
   Future<Either<Failure, String>> login({
@@ -17,12 +14,22 @@ class AuthDataSourceImpl extends AuthDataSource {
   }) async {
     try {
       print('🚀 LOGIN BOSHLANDI: $userInfo');
-      final response = await client.post('/login/', data: userInfo);
+      final response = await DioConfig.client.post('/login/', data: userInfo);
 
       if (response.statusCode != null &&
           response.statusCode! >= 200 &&
           response.statusCode! < 300) {
         print('✅ LOGIN MUVAFFAQIYATLI: ${response.data}');
+
+
+        final accessToken = response.data["tokens"]["access"];
+        final refreshToken = response.data["tokens"]["refresh"];
+
+        await GetStorage().write("accessToken", accessToken);
+        print("accessToken xotiraga yozildi: ${GetStorage().read("accessToken")}");
+        await GetStorage().write("refreshToken", refreshToken);
+        print("refreshToken xotiraga yozildi: ${GetStorage().read("refreshToken")}");
+
         return Right(response.data.toString());
       } else {
         print('⚠️ LOGIN STATUS ERROR: ${response.statusCode}');
@@ -46,7 +53,7 @@ class AuthDataSourceImpl extends AuthDataSource {
   }) async {
     try {
       print('📝 RO‘YXATDAN O‘TISH BOSHLANDI: $userInfo');
-      final response = await client.post('/register/', data: userInfo);
+      final response = await DioConfig.client.post('/register/', data: userInfo);
 
       if (response.statusCode != null &&
           response.statusCode! >= 200 &&
@@ -77,12 +84,21 @@ class AuthDataSourceImpl extends AuthDataSource {
   }) async {
     try {
       print('🔢 OTP TEKSHIRILMOQDA: $userInfo');
-      final response = await client.post('/otp-verify/', data: userInfo);
+      final response = await DioConfig.client.post('/otp-verify/', data: userInfo);
 
       if (response.statusCode != null &&
           response.statusCode! >= 200 &&
           response.statusCode! < 300) {
         print('📥 OTP TASDIQLANDI: ${response.data}');
+
+        final accessToken = response.data["tokens"]["access"];
+        final refreshToken = response.data["tokens"]["refresh"];
+
+        await GetStorage().write("accessToken", accessToken);
+        print("accessToken xotiraga yozildi: ${GetStorage().read("accessToken")}");
+        await GetStorage().write("refreshToken", refreshToken);
+        print("refreshToken xotiraga yozildi: ${GetStorage().read("refreshToken")}");
+        
         return Right(response.data.toString());
       } else {
         print('⚠️ OTP STATUS ERROR: ${response.statusCode}');

@@ -9,6 +9,7 @@ import 'package:coffee_mobile/src/features/auth/domain/usecase/auth_register_use
 import 'package:coffee_mobile/src/features/auth/presentation/cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:get_storage/get_storage.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -36,7 +37,9 @@ class App extends StatelessWidget {
         darkTheme: AppTheme.dark,
         themeMode: AppTheme.themeMode,
         onGenerateRoute: AppRouter.onGenerateRoute,
-        initialRoute: AppRoutes.signup,
+        initialRoute: GetStorage().read("accessToken") != null
+            ? AppRoutes.home
+            : AppRoutes.signup,
       ),
     );
   }

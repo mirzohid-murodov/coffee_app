@@ -3,6 +3,7 @@ import 'package:coffee_mobile/src/core/utils/snackbar/snackbar_service.dart';
 import 'package:coffee_mobile/src/core/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
 
 import '../../../../core/router/app_routes.dart';
@@ -65,12 +66,25 @@ class _OtpScreenState extends State<OtpScreen> {
           }
         },
         child: Center(
-          child: Pinput(
-            length: 6,
-            controller: codeController,
-            defaultPinTheme: defaultPinTheme,
-            focusedPinTheme: focusedPinTheme,
-            submittedPinTheme: submittedPinTheme,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Pinput(
+                length: 6,
+                controller: codeController,
+                defaultPinTheme: defaultPinTheme,
+                focusedPinTheme: focusedPinTheme,
+                submittedPinTheme: submittedPinTheme,
+              ),
+              Text(
+                "",
+                style: GoogleFonts.poppins(
+                  color: AppColors.grey,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w400
+                )
+              )
+            ],
           ),
         ),
       ),
