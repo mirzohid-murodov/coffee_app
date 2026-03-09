@@ -3,13 +3,19 @@ import 'package:coffee_mobile/src/features/auth/presentation/screen/onboarding_s
 import 'package:coffee_mobile/src/features/auth/presentation/screen/otp_screen.dart';
 import 'package:coffee_mobile/src/features/auth/presentation/screen/signup_screen.dart';
 import 'package:coffee_mobile/src/features/auth/presentation/screen/splash_screen.dart';
+import 'package:coffee_mobile/src/features/dashboard/cart/presentation/screen/cart_screen.dart';
+import 'package:coffee_mobile/src/features/dashboard/detail/presentation/screens/detail_screen.dart';
 import 'package:coffee_mobile/src/features/dashboard/home/presentation/screen/home_screen.dart';
+import 'package:coffee_mobile/src/features/dashboard/main/screen/main_screen.dart';
+import 'package:coffee_mobile/src/features/dashboard/post/presentation/screen/post_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:coffee_mobile/src/core/router/app_routes.dart';
 
 class AppRouter {
   static Route<dynamic>? onGenerateRoute(RouteSettings settings) {
     switch (settings.name) {
+      case AppRoutes.main:
+        return MaterialPageRoute(builder: (context) => MainScreen());
       case "/splash":
         return MaterialPageRoute(builder: (context) => SplashScreen());
       case "/onboarding":
@@ -28,6 +34,12 @@ class AppRouter {
         return MaterialPageRoute(builder: (context) => Container());
       case AppRoutes.home:
         return MaterialPageRoute(builder: (context) => HomeScreen());
+      case AppRoutes.detail:
+        return MaterialPageRoute(builder: (context) => DetailScreen());
+      case AppRoutes.post:
+        return MaterialPageRoute(builder: (context) => PostScreen());
+      case AppRoutes.cart:
+        return MaterialPageRoute(builder: (context) => CartScreen());
       default:
         return MaterialPageRoute(builder: (context) => NoPageRoute());
     }
@@ -42,7 +54,7 @@ class NoPageRoute extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Navigator.pushNamed(context, AppRoutes.onboarding);
+          Navigator.pushNamed(context, AppRoutes.main);
         },
         child: Icon(Icons.home),
       ),

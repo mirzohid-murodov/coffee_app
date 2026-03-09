@@ -1,11 +1,13 @@
+import 'dart:async';
 import 'package:coffee_mobile/src/core/constants/color/app_colors.dart';
+import 'package:coffee_mobile/src/core/constants/theme/pinput_theme.dart';
+import 'package:coffee_mobile/src/core/extension/timer_format.dart';
 import 'package:coffee_mobile/src/core/utils/snackbar/snackbar_service.dart';
 import 'package:coffee_mobile/src/core/widget/app_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:pinput/pinput.dart';
-
 import '../../../../core/router/app_routes.dart';
 import '../cubit/auth_cubit.dart';
 
@@ -20,31 +22,32 @@ class OtpScreen extends StatefulWidget {
 
 class _OtpScreenState extends State<OtpScreen> {
   final TextEditingController codeController = TextEditingController();
-  final defaultPinTheme = PinTheme(
-    width: 56,
-    height: 56,
-    textStyle: TextStyle(
-      fontSize: 20,
-      color: Color.fromRGBO(30, 60, 87, 1),
-      fontWeight: FontWeight.w600,
-    ),
-    decoration: BoxDecoration(
-      color: AppColors.grey.withAlpha(100),
-      border: Border.all(color: AppColors.grey),
-      borderRadius: BorderRadius.circular(20),
-    ),
-  );
+  late Timer? timer;
+  int num = 5;
 
-  get focusedPinTheme => defaultPinTheme.copyDecorationWith(
-    border: Border.all(color: Color.fromRGBO(114, 178, 238, 1)),
-    borderRadius: BorderRadius.circular(20),
-  );
+  @override
+  void initState() {
+    super.initState();
+    _otpTimer();
+  }
 
-  get submittedPinTheme => defaultPinTheme.copyWith(
-    decoration: defaultPinTheme.decoration?.copyWith(
-      color: Colors.green.withAlpha(50),
-    ),
-  );
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
+
+  void _otpTimer() {
+    timer = Timer.periodic(Duration(seconds: 1), (time) {
+      if (num == 0) {
+        timer?.cancel();
+      } else {
+        setState(() {
+          num--;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +62,7 @@ class _OtpScreenState extends State<OtpScreen> {
           } else if (state is AuthSuccessState) {
             Navigator.pushNamedAndRemoveUntil(
               context,
-              AppRoutes.home,
+              AppRoutes.main,
               (_) => false,
             );
             return SnackbarService.success(context, "Successfully registered");
@@ -72,18 +75,37 @@ class _OtpScreenState extends State<OtpScreen> {
               Pinput(
                 length: 6,
                 controller: codeController,
-                defaultPinTheme: defaultPinTheme,
-                focusedPinTheme: focusedPinTheme,
-                submittedPinTheme: submittedPinTheme,
+                defaultPinTheme: PinputTheme.defaultPinTheme,
+                focusedPinTheme: PinputTheme.focusedPinTheme,
+                submittedPinTheme: PinputTheme.submittedPinTheme,
               ),
-              Text(
-                "",
-                style: GoogleFonts.poppins(
-                  color: AppColors.grey,
-                  fontSize: 14,
-                  fontWeight: FontWeight.w400
-                )
-              )
+              SizedBox(
+                height: 60,
+                child: Center(
+                  child: num == 0
+                      ? IconButton(
+                          onPressed: () {
+                            setState(() {
+                              num = 120;
+                            });
+                            _otpTimer();
+                          },
+                          icon: Icon(
+                            Icons.refresh,
+                            color: AppColors.primary,
+                            size: 30,
+                          ),
+                        )
+                      : Text(
+                          num.formatTime(num),
+                          style: GoogleFonts.poppins(
+                            color: AppColors.textGrey,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                ),
+              ),
             ],
           ),
         ),

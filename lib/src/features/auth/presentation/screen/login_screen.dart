@@ -47,7 +47,7 @@ class _LoginScreenState extends State<LoginScreen> {
             } else if (state is AuthSuccessState) {
               Navigator.pushNamedAndRemoveUntil(
                 context,
-                AppRoutes.home,
+                AppRoutes.main,
                 (_) => false,
               );
               SnackbarService.success(context, "Logged");
